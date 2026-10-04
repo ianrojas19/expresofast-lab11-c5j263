@@ -1,0 +1,32 @@
+<div class="card" style="margin-bottom: 2rem;">
+  <h2>Rastrear Guía</h2>
+  <div class="form-group">
+    <label for="codigo">Código de Rastreo:</label>
+    <div style="display: flex; gap: 1rem; align-items: flex-start;">
+      <input type="text" id="codigo" [(ngModel)]="codigoRastreo" class="form-control" placeholder="Ej: EXP-2026-1001">
+      <button (click)="buscar()" class="btn btn-primary">Buscar</button>
+    </div>
+  </div>
+
+  <div *ngIf="errorMsg" class="alert alert-danger">
+    {{ errorMsg }}
+  </div>
+</div>
+
+<div *ngIf="envio" class="card tracking-details">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+    <h3 style="margin: 0; background: none; -webkit-text-fill-color: var(--text-primary);">Guía: {{ envio.codigoRastreo }}</h3>
+    <span [class]="'badge ' + (envio.estado === 'PENDIENTE' ? 'pending' : (envio.estado === 'EN_TRANSITO' ? 'transit' : (envio.estado === 'ENTREGADO' ? 'delivered' : 'canceled')))">{{ envio.estado }}</span>
+  </div>
+  
+  <p><strong>Destinatario:</strong> <span>{{ envio.destinatario }}</span></p>
+  <p><strong>Dirección:</strong> <span>{{ envio.direccionDestino }}</span></p>
+  <p><strong>Flete:</strong> <span>{{ envio.montoFlete | currency }}</span></p>
+  
+  <div style="margin-top: 1.5rem;">
+    <label>Progreso de Entrega</label>
+    <div class="progress-container">
+      <div class="progress-bar" [ngStyle]="{'width': getProgreso(envio.estado) + '%', 'background-color': envio.estado === 'CANCELADO' ? 'var(--status-canceled)' : 'var(--accent-color)'}"></div>
+    </div>
+  </div>
+</div>

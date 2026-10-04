@@ -1,0 +1,35 @@
+<div class="card">
+  <h2>Lista de Envíos</h2>
+  <div style="overflow-x: auto;">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Código Rastreo</th>
+          <th>Destinatario</th>
+          <th>Dirección</th>
+          <th>Flete</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let envio of envios">
+          <td><strong>{{ envio.codigoRastreo }}</strong></td>
+          <td>{{ envio.destinatario }}</td>
+          <td>{{ envio.direccionDestino }}</td>
+          <td>{{ envio.montoFlete | currency }}</td>
+          <td><span [class]="getBadgeClass(envio.estado)">{{ envio.estado }}</span></td>
+          <td>
+            <select class="form-control" (change)="actualizarEstado(envio.id, $event)" style="min-width: 150px;">
+              <option value="" disabled selected>Cambiar Estado...</option>
+              <option value="PENDIENTE">PENDIENTE</option>
+              <option value="EN_TRANSITO">EN TRANSITO</option>
+              <option value="ENTREGADO">ENTREGADO</option>
+              <option value="CANCELADO">CANCELADO</option>
+            </select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

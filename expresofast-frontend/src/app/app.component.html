@@ -1,0 +1,13 @@
+<nav>
+  <div class="nav-wrapper">
+    <a routerLink="/" class="brand-logo">ExpresoFast</a>
+    <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <li><a routerLink="/envios" routerLinkActive="active">Lista de Envíos</a></li>
+      <li><a routerLink="/nuevo-envio" routerLinkActive="active">Registrar Envío</a></li>
+      <li><a routerLink="/rastreo" routerLinkActive="active">Rastrear Guía</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="container" style="padding: 20px;">
+  <router-outlet></router-outlet>
+</div>
