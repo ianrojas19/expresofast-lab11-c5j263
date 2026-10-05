@@ -22,6 +22,13 @@
   <p><strong>Destinatario:</strong> <span>{{ envio.destinatario }}</span></p>
   <p><strong>Dirección:</strong> <span>{{ envio.direccionDestino }}</span></p>
   <p><strong>Flete:</strong> <span>{{ envio.montoFlete | currency }}</span></p>
+  <p *ngIf="envio.fechaDespacho"><strong>Despacho:</strong> <span>{{ envio.fechaDespacho }}</span> → <strong>Entrega estimada:</strong> <span>{{ envio.fechaEntregaEstimada }}</span></p>
+  <div *ngIf="envio.paquetes?.length" id="lista-paquetes">
+    <p><strong>Paquetes ({{ envio.paquetes?.length }}):</strong></p>
+    <ul>
+      <li *ngFor="let p of envio.paquetes">{{ p.descripcion }} — {{ p.pesoKg }} kg</li>
+    </ul>
+  </div>
   
   <div style="margin-top: 1.5rem;">
     <label>Progreso de Entrega</label>

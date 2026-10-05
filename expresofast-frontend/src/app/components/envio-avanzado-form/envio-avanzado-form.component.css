@@ -1,0 +1,31 @@
+.form-card { max-width: 760px; margin: 0 auto; }
+.fechas-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.paquetes-header { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+.paquete-row {
+  display: flex; gap: 1rem; align-items: flex-end;
+  padding: 1rem; margin-bottom: 0.75rem; border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: aparecer 0.25s ease;
+}
+.paquete-row .grow { flex: 1; margin-bottom: 0; }
+.paquete-row .peso { width: 140px; margin-bottom: 0; }
+.btn-remove {
+  width: 40px; height: 40px; border-radius: 10px; cursor: pointer; font-weight: 700;
+  background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.4);
+  transition: all 0.2s;
+}
+.btn-remove:hover:not(:disabled) { background: rgba(244, 63, 94, 0.35); transform: scale(1.08); }
+.btn-remove:disabled { opacity: 0.3; cursor: not-allowed; }
+.btn-secondary {
+  padding: 0.5rem 1rem; border-radius: 10px; cursor: pointer; font-weight: 600;
+  background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);
+  transition: all 0.2s;
+}
+.btn-secondary:hover { background: rgba(56, 189, 248, 0.3); }
+small { display: block; margin-top: 0.35rem; font-size: 0.85rem; }
+.error { color: #fb7185; }
+.ok { color: #34d399; }
+.hint { color: #94a3b8; }
+.form-control.invalid { border-color: #fb7185; }
+@keyframes aparecer { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 600px) { .fechas-row { grid-template-columns: 1fr; } .paquete-row { flex-wrap: wrap; } }
