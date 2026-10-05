@@ -1,4 +1,0 @@
-INSERT INTO envio (codigo_rastreo, destinatario, direccion_destino, estado, fecha_creacion, monto_flete) VALUES ('EXP-2026-1001', 'Juan Perez', 'San Jose Centro', 'PENDIENTE', CURRENT_TIMESTAMP(), 2500.0);
-INSERT INTO envio (codigo_rastreo, destinatario, direccion_destino, estado, fecha_creacion, monto_flete) VALUES ('EXP-2026-1002', 'Maria Lopez', 'Alajuela, Parque', 'EN_TRANSITO', CURRENT_TIMESTAMP(), 4500.0);
-INSERT INTO envio (codigo_rastreo, destinatario, direccion_destino, estado, fecha_creacion, monto_flete) VALUES ('EXP-2026-1003', 'Carlos Campos', 'Cartago, TEC', 'ENTREGADO', CURRENT_TIMESTAMP(), 3000.0);
-INSERT INTO envio (codigo_rastreo, destinatario, direccion_destino, estado, fecha_creacion, monto_flete) VALUES ('EXP-2026-1004', 'Ana Jimenez', 'Heredia, Mall', 'CANCELADO', CURRENT_TIMESTAMP(), 5000.0);
