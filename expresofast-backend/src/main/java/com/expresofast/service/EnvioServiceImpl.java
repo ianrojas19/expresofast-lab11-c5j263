@@ -1,13 +1,18 @@
 package com.expresofast.service;
 
-import com.expresofast.dto.CrearEnvioDTO;
 import com.expresofast.dto.EnvioDTO;
+import com.expresofast.dto.EnvioRegistroDTO;
+import com.expresofast.dto.PaqueteDTO;
 import com.expresofast.model.Envio;
+import com.expresofast.model.Paquete;
 import com.expresofast.repository.EnvioRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Random;
 
 @Service
 public class EnvioServiceImpl implements EnvioService {
@@ -19,41 +24,67 @@ public class EnvioServiceImpl implements EnvioService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EnvioDTO> obtenerTodos() {
         return repository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EnvioDTO obtenerPorRastreo(String codigo) {
         Envio envio = repository.findByCodigoRastreo(codigo)
-                .orElseThrow(() -> new RuntimeException("Envío no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Envío no encontrado"));
         return mapToDTO(envio);
     }
 
+    /**
+     * Inserta el envío y todos sus paquetes en una única transacción:
+     * si falla cualquier paquete, se revierte también el envío.
+     */
     @Override
-    public EnvioDTO registrarEnvio(CrearEnvioDTO dto) {
+    @Transactional
+    public EnvioDTO registrarEnvio(EnvioRegistroDTO dto) {
+        String tracking = dto.getNumeroTracking().trim();
+        if (repository.existsByCodigoRastreo(tracking)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Este número de rastreo ya está en uso");
+        }
+        if (!dto.getFechaEntregaEstimada().isAfter(dto.getFechaDespacho())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "La fecha de entrega estimada debe ser posterior a la fecha de despacho");
+        }
+
         Envio envio = new Envio();
+        envio.setCodigoRastreo(tracking);
         envio.setDestinatario(dto.getDestinatario());
         envio.setDireccionDestino(dto.getDireccionDestino());
         envio.setMontoFlete(dto.getMontoFlete());
         envio.setEstado("PENDIENTE");
-        
-        // Generate random code like EXP-2026-XXXX
-        Random r = new Random();
-        int code = 1000 + r.nextInt(9000);
-        envio.setCodigoRastreo("EXP-2026-" + code);
-        
-        Envio guardado = repository.save(envio);
-        return mapToDTO(guardado);
+        envio.setFechaDespacho(dto.getFechaDespacho());
+        envio.setFechaEntregaEstimada(dto.getFechaEntregaEstimada());
+
+        for (PaqueteDTO p : dto.getPaquetes()) {
+            Paquete paquete = new Paquete();
+            paquete.setDescripcion(p.getDescripcion());
+            paquete.setPesoKg(p.getPesoKg());
+            envio.agregarPaquete(paquete);
+        }
+
+        return mapToDTO(repository.save(envio));
     }
 
     @Override
+    @Transactional
     public EnvioDTO actualizarEstado(Long id, String estado) {
         Envio envio = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Envío no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Envío no encontrado"));
         envio.setEstado(estado);
-        Envio actualizado = repository.save(envio);
-        return mapToDTO(actualizado);
+        return mapToDTO(repository.save(envio));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existeTracking(String trackingNumber) {
+        return repository.existsByCodigoRastreo(trackingNumber.trim());
     }
 
     private EnvioDTO mapToDTO(Envio envio) {
@@ -65,6 +96,15 @@ public class EnvioServiceImpl implements EnvioService {
         dto.setMontoFlete(envio.getMontoFlete());
         dto.setEstado(envio.getEstado());
         dto.setFechaCreacion(envio.getFechaCreacion());
+        dto.setFechaDespacho(envio.getFechaDespacho());
+        dto.setFechaEntregaEstimada(envio.getFechaEntregaEstimada());
+        dto.setPaquetes(envio.getPaquetes().stream().map(p -> {
+            PaqueteDTO pd = new PaqueteDTO();
+            pd.setId(p.getId());
+            pd.setDescripcion(p.getDescripcion());
+            pd.setPesoKg(p.getPesoKg());
+            return pd;
+        }).collect(Collectors.toList()));
         return dto;
     }
 }

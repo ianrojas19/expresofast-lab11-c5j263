@@ -1,10 +1,13 @@
 package com.expresofast.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "envio")
+@Table(name = "ENVIOS")
 public class Envio {
 
     @Id
@@ -29,8 +32,20 @@ public class Envio {
     @Column(nullable = false)
     private LocalDateTime fechaCreacion;
 
+    private LocalDate fechaDespacho;
+
+    private LocalDate fechaEntregaEstimada;
+
+    @OneToMany(mappedBy = "envio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Paquete> paquetes = new ArrayList<>();
+
     public Envio() {
         this.fechaCreacion = LocalDateTime.now();
+    }
+
+    public void agregarPaquete(Paquete paquete) {
+        paquete.setEnvio(this);
+        this.paquetes.add(paquete);
     }
 
     public Long getId() { return id; }
@@ -47,4 +62,10 @@ public class Envio {
     public void setEstado(String estado) { this.estado = estado; }
     public LocalDateTime getFechaCreacion() { return fechaCreacion; }
     public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+    public LocalDate getFechaDespacho() { return fechaDespacho; }
+    public void setFechaDespacho(LocalDate fechaDespacho) { this.fechaDespacho = fechaDespacho; }
+    public LocalDate getFechaEntregaEstimada() { return fechaEntregaEstimada; }
+    public void setFechaEntregaEstimada(LocalDate fechaEntregaEstimada) { this.fechaEntregaEstimada = fechaEntregaEstimada; }
+    public List<Paquete> getPaquetes() { return paquetes; }
+    public void setPaquetes(List<Paquete> paquetes) { this.paquetes = paquetes; }
 }
